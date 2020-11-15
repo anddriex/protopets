@@ -67,7 +67,7 @@ dependencies {
     testImplementation "androidx.room:room-testing:$room_version"
 
     // Pytorch
-    implementation 'org.pytorch:pytorch_android:1.4.0'
-    implementation 'org.pytorch:pytorch_android_torchvision:1.4.0'
+    implementation 'org.pytorch:pytorch_android:1.6.0'
+    implementation 'org.pytorch:pytorch_android_torchvision:1.6.0'
 
 }
