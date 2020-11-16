@@ -3,7 +3,6 @@ package com.eapp.protopets
 import android.os.SystemClock
 import android.text.TextUtils
 import android.util.Log
-import androidx.annotation.WorkerThread
 import androidx.camera.core.ImageProxy
 import androidx.camera.view.PreviewView
 import androidx.fragment.app.Fragment
@@ -31,7 +30,7 @@ class AnalyzeImageFragment : AbstractCameraxFragment<AnalysisResult>() {
         private const val TAG = "ProtoPets"
         private const val INPUT_TENSOR_WIDTH: Long = 224
         private const val INPUT_TENSOR_HEIGHT: Long = 224
-        private const val TOP_K = 3
+        private const val TOP_K = 2
         private const val MOVING_AVG_PERIOD = 10
         private const val FORMAT_MS = "%dms"
         private const val FORMAT_AVG_MS = "avg:%.0fms"
@@ -49,7 +48,8 @@ class AnalyzeImageFragment : AbstractCameraxFragment<AnalysisResult>() {
     }
 
     override fun applyToUiAnalyzeImageResult(result: AnalysisResult) {
-        Log.d(TAG, "applying analysis image results ${result.analysisDuration.toString()}")
+        Log.d(TAG, "result score: ${result.topNScores[0]} | className: ${result.topNClassNames[0]}")
+        Log.d(TAG, "applying analysis image results ${result.analysisDuration}")
         resultText.text = result.analysisDuration.toString()
     }
 
@@ -58,7 +58,7 @@ class AnalyzeImageFragment : AbstractCameraxFragment<AnalysisResult>() {
             return moduleAssetName!!
         }
 
-        return "resnet18.pt"
+        return "petsmodel.pt"
     }
 
     override fun onDestroy() {
@@ -102,7 +102,7 @@ class AnalyzeImageFragment : AbstractCameraxFragment<AnalysisResult>() {
 
             for(i in 0 until TOP_K) {
                 val ix = ixs[i]
-                topKClassNames[i] = Constants.IMAGENET_CLASSES[ix]
+                topKClassNames[i] = Constants.PETS_CLASSES[ix]
                 topKScores[i] = scores!![ix]
             }
             val analysisDuration = SystemClock.elapsedRealtime() - startTime

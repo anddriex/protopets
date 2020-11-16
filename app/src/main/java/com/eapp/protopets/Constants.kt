@@ -1003,4 +1003,6 @@ object Constants {
         "ear, spike, capitulum",
         "toilet tissue, toilet paper, bathroom tissue"
     )
+
+    var PETS_CLASSES = arrayOf("chobi", "lia")
 }

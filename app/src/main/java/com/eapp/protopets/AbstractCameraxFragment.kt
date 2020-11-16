@@ -99,18 +99,17 @@ abstract class AbstractCameraxFragment<R> : Fragment() {
                 .build()
                 .also {
                     it.setAnalyzer(cameraExecutor, { image ->
-                        if (SystemClock.elapsedRealtime() - lastAnalysisResultTime < 500) {
-                            return@setAnalyzer
-                        }
+                        // is returning and dont anlyze image
+//                        if (SystemClock.elapsedRealtime() - lastAnalysisResultTime < 500) {
+//                            return@setAnalyzer
+//                        }
 
                         val result = analyzeImage(image, image.imageInfo.rotationDegrees)
-
                         if (result != null) {
                             lastAnalysisResultTime = SystemClock.elapsedRealtime()
-//                    activity?.runOnUiThread {
-//                        applyToUiAnalyzeImageResult(result)
-//                    }
-                            Log.d(TAG, "result score: ${result.topNScores[0]} | className: ${result.topNClassNames[0]}")
+                            activity?.runOnUiThread {
+                                applyToUiAnalyzeImageResult(result)
+                            }
                         }
                         image.close()
                     })
