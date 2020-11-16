@@ -15,12 +15,52 @@
 
     <TextView
         android:id="@+id/resultText"
+        style="@style/ImageClassificationResultText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginBottom="16dp"
-        android:text="@string/hello_first_fragment"
-        android:textColor="#E41111"
+        android:text="@string/result_text"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="@+id/viewFinder"
         app:layout_constraintStart_toStartOf="@+id/viewFinder" />
+
+    <TextView
+        android:id="@+id/msText"
+        style="@style/ImageClassificationFpsMsText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:elevation="1dp"
+        android:text="@string/ms_text"
+        android:visibility="invisible"
+        app:layout_constraintStart_toStartOf="@+id/viewFinder"
+        app:layout_constraintTop_toTopOf="@+id/viewFinder" />
+
+    <TextView
+        android:id="@+id/msAvgText"
+        style="@style/ImageClassificationFpsMsText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:elevation="1dp"
+        android:text="@string/msAvg_text"
+        android:visibility="invisible"
+        app:layout_constraintStart_toEndOf="@+id/fpsText"
+        app:layout_constraintTop_toTopOf="@+id/viewFinder" />
+
+    <TextView
+        android:id="@+id/fpsText"
+        style="@style/ImageClassificationFpsMsText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:elevation="1dp"
+        android:text="@string/fps_text"
+        android:visibility="invisible"
+        app:layout_constraintStart_toEndOf="@+id/msText"
+        app:layout_constraintTop_toTopOf="@+id/viewFinder" />
 </androidx.constraintlayout.widget.ConstraintLayout>

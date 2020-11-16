@@ -20,7 +20,6 @@ object Utils {
             inputStream.use { input ->
                 val outputStream = FileOutputStream(file)
                 outputStream.use { output ->
-                    val buffer = ByteArray(4 * 1024)
                     input.copyTo(output)
                 }
             }

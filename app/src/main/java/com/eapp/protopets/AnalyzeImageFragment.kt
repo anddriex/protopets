@@ -3,6 +3,7 @@ package com.eapp.protopets
 import android.os.SystemClock
 import android.text.TextUtils
 import android.util.Log
+import android.view.View
 import androidx.camera.core.ImageProxy
 import androidx.camera.view.PreviewView
 import androidx.fragment.app.Fragment
@@ -14,6 +15,7 @@ import org.pytorch.torchvision.TensorImageUtils
 import java.io.File
 import java.lang.Exception
 import java.nio.FloatBuffer
+import java.util.*
 
 /**
  * A simple [Fragment] subclass as the default destination in the navigation.
@@ -26,6 +28,8 @@ class AnalyzeImageFragment : AbstractCameraxFragment<AnalysisResult>() {
     private var inputTensorBuffer: FloatBuffer? = null
     private var inputTensor: Tensor? = null
 
+    var movingAvsSum = 0
+    var movingAvgQueue = LinkedList<Long>()
     companion object {
         private const val TAG = "ProtoPets"
         private const val INPUT_TENSOR_WIDTH: Long = 224
@@ -36,7 +40,6 @@ class AnalyzeImageFragment : AbstractCameraxFragment<AnalysisResult>() {
         private const val FORMAT_AVG_MS = "avg:%.0fms"
 
         private const val FORMAT_FPS = "%.1fFPS"
-        const val SCORES_FORMAT = "%.2f"
     }
 
     override fun getContentViewLayoutId(): Int {
@@ -48,9 +51,31 @@ class AnalyzeImageFragment : AbstractCameraxFragment<AnalysisResult>() {
     }
 
     override fun applyToUiAnalyzeImageResult(result: AnalysisResult) {
+        movingAvsSum += result.moduleForwardDuration!!.toInt()
+        movingAvgQueue.add(result.moduleForwardDuration)
+        if(movingAvgQueue.size > MOVING_AVG_PERIOD) {
+            movingAvsSum -= movingAvgQueue.remove().toInt()
+        }
         Log.d(TAG, "result score: ${result.topNScores[0]} | className: ${result.topNClassNames[0]}")
-        Log.d(TAG, "applying analysis image results ${result.analysisDuration}")
-        resultText.text = result.analysisDuration.toString()
+
+        // Validating we have a high score
+        if (result.topNScores[0] > 0.7) {
+            resultText.text = getString(R.string.result_text, result.topNClassNames[0], result.topNScores[0])
+            if (resultText.visibility != View.VISIBLE) resultText.visibility = View.VISIBLE
+        }
+
+        msText.text = String.format(Locale.US, FORMAT_MS, result.moduleForwardDuration)
+        if (msText.visibility != View.VISIBLE) msText.visibility = View.VISIBLE
+
+        fpsText.text = String.format(Locale.US, FORMAT_FPS, (1000.0f / result.analysisDuration))
+        if(fpsText.visibility != View.VISIBLE) fpsText.visibility = View.VISIBLE
+
+        if (movingAvgQueue.size == MOVING_AVG_PERIOD) {
+            val avgMs =  movingAvsSum / MOVING_AVG_PERIOD
+            msAvgText.text = String.format(Locale.US, FORMAT_AVG_MS, avgMs.toFloat())
+            if(msAvgText.visibility != View.VISIBLE) msAvgText.visibility = View.VISIBLE
+        }
+
     }
 
     protected fun getModuleAssetName(): String {
